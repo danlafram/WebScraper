@@ -4,24 +4,38 @@ from selenium import webdriver
 driver = webdriver.Chrome() # Chrome driver executable is in py directory, no need to specify path
 driver.get('https://www.instagram.com/');
 
-if driver.find_element_by_xpath("//*[contains(text(), 'Log in')]") is None:
+# Navigate to login page
+
+if driver.find_element_by_xpath("//a[contains(text(), 'Log in')]") is None:
 	print "Could not find login button"
 else:
 	print "Found login button"
-	driver.find_element_by_xpath("//*[contains(text(), 'Log in')]").click()
+	driver.find_element_by_xpath("//a[contains(text(), 'Log in')]").click()
 
-if driver.find_element_by_xpath("//*[contains(text(), 'Not now')]") is None:
-	# Perform usual instagram login
-	print "No facebook login option..."
-	print "Login to instagram directly"
+# Input Instagram credentials
 
+if driver.find_element_by_name("username"):
+	print "Found username input"
+	driver.find_element_by_name("username").send_keys("") # !! REMOVE BEFORE COMMITING !!
 else:
-	# Bypass facebook login to regular login
-	print "Bypass facebook login"
-	driver.find_element_by_xpath("//*[contains(text(), 'Not now')]").click()
+	"Username input NOT FOUND"
 
-# Returned to original login
+if driver.find_element_by_name("password"):
+	print "Found password input"
+	driver.find_element_by_name("password").send_keys("") # !! REMOVE BEFORE COMMITING !!
+else:
+	print "Password input NOT FOUND"
 
-driver.find_element_by_xpath("//*[contains(text(), 'Log in')]").click()
+if driver.find_element_by_xpath("//button[contains(text(), 'Log in')]"):
+	print "Log in button found"
+	driver.find_element_by_xpath("//button[contains(text(), 'Log in')]").click()
+else:
+	print "Log in button NOT FOUND"
+
+if driver.find_element_by_xpath("//input[@placeholder='Search']"):
+	print "Search input found"
+	driver
+else:
+	print "Search input NOT FOUND"
 
 # driver.quit()
