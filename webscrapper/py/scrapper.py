@@ -1,23 +1,37 @@
 import sys
 import time
+import requests
+import threading
+from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
 
-driver = webdriver.Chrome() # Chrome driver executable is in py directory, no need to specify path
+# Chrome driver executable is in py directory, no need to specify path
+driver = webdriver.Chrome()
 
-driver.get('https://www.instagram.com/explore/tags/' + str(sys.argv[1]) + "/")
+url = 'https://www.instagram.com/explore/tags/'
+
+driver.get(url + str(sys.argv[1]) + "/")
 
 
-# Find and input Search
-# time.sleep(2)
-# if driver.find_element_by_xpath("//input[@type='text']"):
-# 	print "Search input found"
-# 	driver.find_element_by_xpath("//input[@type='text']").send_keys("travel")
-# 	time.sleep(0.5)
-# 	driver.find_element_by_xpath("//input[@type='text']").send_keys(Keys.RETURN)
+links = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._f2mse a')]
 
-# else:
-# 	print "Search input NOT FOUND"
+driver.get(links[0])
 
-# driver.quit()
+r = requests.get(links[0])
+
+data = r.text
+
+soup = BeautifulSoup(data, "lxml")
+print soup
+for link in soup.find_all('a'):
+	print(link.get('href'))
+
+# def worker(link): 
+# 	# Thread worker function
+
+# threads = []
+
+# for i in range(5):
+# 	t = threading.Thread(target=worker, args=(i,))
+# 	threads.append(t)
+# 	t.start()
