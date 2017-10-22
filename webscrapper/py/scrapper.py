@@ -1,5 +1,9 @@
+import re
 import sys
+import ast
 import time
+import json
+import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
@@ -18,7 +22,10 @@ links = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('
 # print (links)
 
 
-for link in range(9):
+
+
+
+for link in range(1):
 	# Create driver
 	driver2 = webdriver.Chrome()
 	# Go to URL of user
@@ -26,25 +33,13 @@ for link in range(9):
 	# Get user's URL
 	username = [a.get_attribute('href') for a in driver2.find_elements_by_css_selector('div._eeohz a')]
 	# Go to user's profile
-	driver2.get(username[0])
-	# Print username from profile page
-	print (driver2.find_element_by_class_name('_rf3jb').text)
-	# Loop over Posts, Followers and Following
-	for elem in driver2.find_elements_by_xpath('//span[@class = "_fd86t"]'):
-		# Print Posts, Followers, Following
-		print (elem.text)
-
-
-# driver.get(links[0])
-
-# username = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._eeohz a')]
-
-# driver.get(username[0])
-
-# print ("Printing username: ")
-
-# print (driver.find_element_by_class_name('_rf3jb').text)
-
-# # Number of posts, followers following
-# for elem in driver.find_elements_by_xpath('//span[@class = "_fd86t"]'):
-# 	print (elem.text)
+	# print (username)
+	# (driver2.get(username[0]))
+	r = requests.get(username[0])
+	html = r.text
+	soup = BeautifulSoup(html, 'lxml')
+	tags = soup.find_all('script')
+	str_tags = str(tags[1])
+	str_tags = str_tags.split('"config": ', 1)[-1]
+	str_tags = str_tags.replace(" ", "").rstrip(str_tags[-10:])
+	print (str_tags)
