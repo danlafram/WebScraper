@@ -18,7 +18,7 @@ links = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('
 # print (links)
 
 
-for link in range(4):
+for link in range(9):
 	# Create driver
 	driver2 = webdriver.Chrome()
 	# Go to URL of user
