@@ -42,6 +42,7 @@ for link in range(1):
 	str_tags = str(tags[1])
 	str_tags = str_tags.split('_sharedData = ', 1)[-1]
 	str_tags = str_tags.replace(" ", "").rstrip(str_tags[-10:])
-	tags_json = json.dumps(str_tags)
-	tags_json = json.loads(tags_json)
-	print (tags_json)
+	# tags_json = json.dumps(str_tags)
+	tags_json = json.loads(str_tags)
+	print(tags_json['entry_data']['ProfilePage'][0]['user']['followed_by']['count'])
+	# print (tags_json)
