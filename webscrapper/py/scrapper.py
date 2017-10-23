@@ -44,5 +44,10 @@ for link in range(1):
 	str_tags = str_tags.replace(" ", "").rstrip(str_tags[-10:])
 	# tags_json = json.dumps(str_tags)
 	tags_json = json.loads(str_tags)
-	print(tags_json['entry_data']['ProfilePage'][0]['user']['followed_by']['count'])
-	# print (tags_json)
+	# print(tags_json['entry_data']['ProfilePage'][0]['user']['followed_by']['count'])follows
+	num_followers = tags_json['entry_data']['ProfilePage'][0]['user']['followed_by']['count']
+	num_following = tags_json['entry_data']['ProfilePage'][0]['user']['follows']['count']
+	username = tags_json['entry_data']['ProfilePage'][0]['user']['username']
+	print (num_followers)
+	print (num_following)
+	print (username)
