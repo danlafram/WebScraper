@@ -40,6 +40,8 @@ for link in range(1):
 	soup = BeautifulSoup(html, 'lxml')
 	tags = soup.find_all('script')
 	str_tags = str(tags[1])
-	str_tags = str_tags.split('"config": ', 1)[-1]
+	str_tags = str_tags.split('_sharedData = ', 1)[-1]
 	str_tags = str_tags.replace(" ", "").rstrip(str_tags[-10:])
-	print (str_tags)
+	tags_json = json.dumps(str_tags)
+	tags_json = json.loads(tags_json)
+	print (tags_json)
