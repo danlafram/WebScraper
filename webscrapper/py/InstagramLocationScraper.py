@@ -9,13 +9,13 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from mysql.connector import errorcode
 
-username = ""
-user_url = ""
-user_posts = 0
-user_followers = 0
-user_following = 0
-user_profile_picture = ""
-user_recents = ""
+config = {
+  'user': 'root',
+  'password': 'root',
+  'host': 'localhost',
+  'database': 'scraper',
+  'raise_on_warnings': True,
+}
 
 def extractLinksFromTopPosts():
 	# Chrome driver executable is in py directory, no need to specify path
@@ -63,14 +63,40 @@ def extractDataFromJSON():
 	username = tags_json['entry_data']['ProfilePage'][0]['user']['username']
 	user_posts = tags_json['entry_data']['ProfilePage'][0]['user']['media']['count']
 	user_profile_picture = tags_json['entry_data']['ProfilePage'][0]['user']['profile_pic_url_hd']
+	user_url = ('https://instagram.com/' + username)
+	user_recents = ""
 	print (user_followers)
 	print (user_following)
 	print (username)
 	print (user_posts)
 	print(user_profile_picture)
+	print (user_url)
+	storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
 
-#def storeData():
-	# Call method when ready to store data from extracted JSON
+def storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents):
+	try:
+		cnx = mysql.connector.connect(**config)
+
+	except mysql.connector.Error as err:
+		if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+			print("Something is wrong with your user name or password")
+		elif err.errno == errorcode.ER_BAD_DB_ERROR:
+			print("Database does not exist")
+		else:
+			print(err)
+	else:
+		print("Connection established")
+		cursor = cnx.cursor()
+		print("Cursor created")
+		add_info = ("INSERT INTO user_info "
+               "(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents) "
+               "VALUES (%s, %s, %s, %s, %s, %s, %s)")
+		info_data = (username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
+		cursor.execute(add_info, info_data)
+		cnx.commit()
+		cursor.close()
+		cnx.close()
+
 
 
 extractDataFromJSON()
