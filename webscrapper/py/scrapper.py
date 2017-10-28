@@ -17,38 +17,37 @@ config = {
   'raise_on_warnings': True,
 }
 
+def queryUserInfo():
+	try:
+		cnx = mysql.connector.connect(**config)
 
-
-try:
-  cnx = mysql.connector.connect(**config)
-
-except mysql.connector.Error as err:
-	if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-		print("Something is wrong with your user name or password")
-	elif err.errno == errorcode.ER_BAD_DB_ERROR:
-		print("Database does not exist")
+	except mysql.connector.Error as err:
+		if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+			print("Something is wrong with your user name or password")
+		elif err.errno == errorcode.ER_BAD_DB_ERROR:
+			print("Database does not exist")
+		else:
+			print(err)
 	else:
-		print(err)
-else:
-	cursor = cnx.cursor()
-	query = ("SELECT username, user_url, user_followers FROM user_info ")
-	cursor.execute(query)
-	for (username, user_url, user_followers) in cursor:
-		print("{} who can be found at {} has {} number of followers".format(
-			username, user_url, user_followers))
-	cursor.close()
-	cnx.close()
+		cursor = cnx.cursor()
+		query = ("SELECT username, user_url, user_followers FROM user_info ")
+		cursor.execute(query)
+		for (username, user_url, user_followers) in cursor:
+			print("{} who can be found at {} has {} number of followers".format(
+				username, user_url, user_followers))
+		cursor.close()
+		cnx.close()
 
-# Chrome driver executable is in py directory, no need to specify path
-driver = webdriver.Chrome()
+def extractDataFromTag():
+	# Chrome driver executable is in py directory, no need to specify path
+	driver = webdriver.Chrome()
 
-url = 'https://www.instagram.com/explore/tags/'
+	url = 'https://www.instagram.com/explore/tags/'
 
-driver.get(url + str(sys.argv[1]) + "/")
+	driver.get(url + str(sys.argv[1]) + "/")
 
-links = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._f2mse a')]
+	links = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._f2mse a')]
 
-def extractData(links):
 	for link in range(1):
 		# Create driver -> Consider parsing 'top posts' page with soup to avoid second driver
 		driver2 = webdriver.Chrome()
@@ -82,4 +81,4 @@ def extractData(links):
 		print (username)
 		print (num_posts)
 
-extractData(links)
+extractData()
