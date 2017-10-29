@@ -68,13 +68,8 @@ def extractDataFromJSON():
 		user_posts = tags_json[i]['entry_data']['ProfilePage'][0]['user']['media']['count']
 		user_profile_picture = tags_json[i]['entry_data']['ProfilePage'][0]['user']['profile_pic_url_hd']
 		user_url = ('https://instagram.com/' + username)
-		user_recents = ""
-		print (user_followers)
-		print (user_following)
-		print (username)
-		print (user_posts)
-		print(user_profile_picture)
-		print (user_url)
+		user_recents = []
+		
 		storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
 
 def storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents):
