@@ -87,7 +87,7 @@ def storeData(username, user_url, user_posts, user_followers, user_following, us
 		print("Connection established")
 		cursor = cnx.cursor()
 		print("Cursor created")
-		add_info = ("INSERT INTO user_info "
+		add_info = ("INSERT INTO ottawa_instagram "
                "(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents) "
                "VALUES (%s, %s, %s, %s, %s, %s, %s)")
 		info_data = (username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
