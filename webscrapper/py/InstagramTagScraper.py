@@ -25,8 +25,6 @@ def extractLinksFromTopPosts():
 
 	driver.get(url + str(sys.argv[1]) + "/")
 
-	driver.get(url)
-
 	# List of links of all the pictures on the page
 	links = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._f2mse a')]
 	return links
@@ -70,8 +68,7 @@ def extractDataFromJSON():
 		user_posts = tags_json[i]['entry_data']['ProfilePage'][0]['user']['media']['count']
 		user_profile_picture = tags_json[i]['entry_data']['ProfilePage'][0]['user']['profile_pic_url_hd']
 		user_url = ('https://instagram.com/' + username)
-		user_recents = []
-		
+		user_recents = ""
 		storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
 
 def storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents):
@@ -101,4 +98,3 @@ def storeData(username, user_url, user_posts, user_followers, user_following, us
 
 
 extractDataFromJSON()
-driver.close()

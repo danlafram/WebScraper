@@ -55,7 +55,8 @@ def parseLinks():
 		str_tags = str_tags.replace(" ", "").rstrip(str_tags[-10:])
 		# Turn new JS object string into JSON object
 		str_tags_arr.append(json.loads(str_tags))
-	driver2.close()
+		driver2.close()
+
 	return str_tags_arr
 
 def extractDataFromJSON():
@@ -68,7 +69,7 @@ def extractDataFromJSON():
 		user_posts = tags_json[i]['entry_data']['ProfilePage'][0]['user']['media']['count']
 		user_profile_picture = tags_json[i]['entry_data']['ProfilePage'][0]['user']['profile_pic_url_hd']
 		user_url = ('https://instagram.com/' + username)
-		user_recents = []
+		user_recents = ""
 		
 		storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
 
@@ -96,7 +97,4 @@ def storeData(username, user_url, user_posts, user_followers, user_following, us
 		cursor.close()
 		cnx.close()
 
-
-
 extractDataFromJSON()
-driver.close()
