@@ -26,12 +26,13 @@ def extractLinksFromTopPosts():
 	driver.get(url)
 
 	# List of links of all the pictures on the page
-	return [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._f2mse a')]
+	links = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._f2mse a')]
+	return links
 
 def parseLinks():
 	links = extractLinksFromTopPosts()
-
-	for link in range(1):
+	str_tags_arr = []
+	for link in range(9):
 		# Create driver -> Consider parsing 'top posts' page with soup to avoid second driver
 		driver2 = webdriver.Chrome()
 		# Go to URL of user
@@ -53,25 +54,28 @@ def parseLinks():
 		# Remove back end of script tag to only have JS object
 		str_tags = str_tags.replace(" ", "").rstrip(str_tags[-10:])
 		# Turn new JS object string into JSON object
-		return json.loads(str_tags)
+		str_tags_arr.append(json.loads(str_tags))
+	driver2.close()
+	return str_tags_arr
 
 def extractDataFromJSON():
 	tags_json = parseLinks()
-	# Extract wanted data form JSON object
-	user_followers = tags_json['entry_data']['ProfilePage'][0]['user']['followed_by']['count']
-	user_following = tags_json['entry_data']['ProfilePage'][0]['user']['follows']['count']
-	username = tags_json['entry_data']['ProfilePage'][0]['user']['username']
-	user_posts = tags_json['entry_data']['ProfilePage'][0]['user']['media']['count']
-	user_profile_picture = tags_json['entry_data']['ProfilePage'][0]['user']['profile_pic_url_hd']
-	user_url = ('https://instagram.com/' + username)
-	user_recents = ""
-	print (user_followers)
-	print (user_following)
-	print (username)
-	print (user_posts)
-	print(user_profile_picture)
-	print (user_url)
-	storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
+	for i in range(len(tags_json)):
+		# Extract wanted data form JSON object
+		user_followers = tags_json[i]['entry_data']['ProfilePage'][0]['user']['followed_by']['count']
+		user_following = tags_json[i]['entry_data']['ProfilePage'][0]['user']['follows']['count']
+		username = tags_json[i]['entry_data']['ProfilePage'][0]['user']['username']
+		user_posts = tags_json[i]['entry_data']['ProfilePage'][0]['user']['media']['count']
+		user_profile_picture = tags_json[i]['entry_data']['ProfilePage'][0]['user']['profile_pic_url_hd']
+		user_url = ('https://instagram.com/' + username)
+		user_recents = ""
+		print (user_followers)
+		print (user_following)
+		print (username)
+		print (user_posts)
+		print(user_profile_picture)
+		print (user_url)
+		storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
 
 def storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents):
 	try:
@@ -100,3 +104,4 @@ def storeData(username, user_url, user_posts, user_followers, user_following, us
 
 
 extractDataFromJSON()
+driver.close()
