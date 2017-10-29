@@ -16,11 +16,10 @@ config = {
   'database': 'scraper',
   'raise_on_warnings': True,
 }
+# Chrome driver executable is in py directory, no need to specify path
+driver = webdriver.Chrome()
 
 def extractLinksFromTopPosts():
-	# Chrome driver executable is in py directory, no need to specify path
-	driver = webdriver.Chrome()
-
 	url = 'https://www.instagram.com/explore/tags/'
 
 	driver.get(url + str(sys.argv[1]) + "/")
@@ -55,7 +54,7 @@ def parseLinks():
 		str_tags = str_tags.replace(" ", "").rstrip(str_tags[-10:])
 		# Turn new JS object string into JSON object
 		str_tags_arr.append(json.loads(str_tags))
-	driver2.close()
+		driver2.close()
 	return str_tags_arr
 
 def extractDataFromJSON():
@@ -83,9 +82,7 @@ def storeData(username, user_url, user_posts, user_followers, user_following, us
 		else:
 			print(err)
 	else:
-		print("Connection established")
 		cursor = cnx.cursor()
-		print("Cursor created")
 		add_info = ("INSERT INTO instagram_travel "
                "(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents) "
                "VALUES (%s, %s, %s, %s, %s, %s, %s)")
@@ -98,3 +95,4 @@ def storeData(username, user_url, user_posts, user_followers, user_following, us
 
 
 extractDataFromJSON()
+driver.close()

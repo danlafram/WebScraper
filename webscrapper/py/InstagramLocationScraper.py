@@ -17,14 +17,12 @@ config = {
   'raise_on_warnings': True,
 }
 
+# Chrome driver executable is in py directory, no need to specify path
+driver = webdriver.Chrome()
+
 def extractLinksFromTopPosts():
-	# Chrome driver executable is in py directory, no need to specify path
-	driver = webdriver.Chrome()
-
 	url = 'https://www.instagram.com/explore/locations/215009654/ottawa-ontario/'
-
 	driver.get(url)
-
 	# List of links of all the pictures on the page
 	links = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._f2mse a')]
 	return links
@@ -70,7 +68,6 @@ def extractDataFromJSON():
 		user_profile_picture = tags_json[i]['entry_data']['ProfilePage'][0]['user']['profile_pic_url_hd']
 		user_url = ('https://instagram.com/' + username)
 		user_recents = ""
-		
 		storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
 
 def storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents):
@@ -85,9 +82,7 @@ def storeData(username, user_url, user_posts, user_followers, user_following, us
 		else:
 			print(err)
 	else:
-		print("Connection established")
 		cursor = cnx.cursor()
-		print("Cursor created")
 		add_info = ("INSERT INTO ottawa_instagram "
                "(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents) "
                "VALUES (%s, %s, %s, %s, %s, %s, %s)")
@@ -98,3 +93,4 @@ def storeData(username, user_url, user_posts, user_followers, user_following, us
 		cnx.close()
 
 extractDataFromJSON()
+driver.close()
