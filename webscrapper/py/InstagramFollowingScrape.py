@@ -23,7 +23,7 @@ config = {
 # Chrome driver executable is in py directory, no need to specify path
 driver = webdriver.Chrome()
 
-def loggin():
+def loggin(): # Login to instagram to be able to see all the following + followers
 	driver.get("https://www.instagram.com")
 
 	if driver.find_element_by_xpath("//a[contains(text(), 'Log in')]") is None:
@@ -49,20 +49,27 @@ def loggin():
 	time.sleep(1)
 	extractLinksFromFollowing()
 
-def extractLinksFromFollowing():
-	url = 'https://www.instagram.com/adamdelduca/'
+def extractLinksFromTopPosts(): # Go to Ottawa page and get the links to all the posts on page
+	url = 'https://www.instagram.com/explore/locations/215009654/ottawa-ontario/'
 	driver.get(url)
-	# Find following link and click to display modal
-	links = [a.get_attribute('href') for a in driver.find_elements_by_class_name('_t98z6')]
-	# Display Following modal (driver required)
-	driver.find_elements_by_class_name('_t98z6')[2].click()
-	# Wait for modal to pop
-	time.sleep(0.5)
-	# Extract following href's from modal
-	following = [a.get_attribute('href') for a in driver.find_elements_by_class_name('_o5iw8')]
-	parseFollowing(following)
+	# List of links of all the pictures on the page
+	links = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._f2mse a')]
+	return links
 
-def parseLinks():
+def extractLinksFromFollowing():
+	# url = 'https://www.instagram.com/adamdelduca/'
+	users = extractLinksFromTopPosts()
+	for i in range(9):
+		driver.get(users[i])
+		# Find following link and click to display modal
+		links = [a.get_attribute('href') for a in driver.find_elements_by_class_name('_t98z6')]
+		# Display Following modal (driver required)
+		driver.find_elements_by_class_name('_t98z6')[2].click()
+		# Wait for modal to pop
+		time.sleep(0.5)
+		# Extract following href's from modal
+		following = [a.get_attribute('href') for a in driver.find_elements_by_class_name('_o5iw8')]
+		parseFollowing(following)
 
 def parseFollowing(following):
 	str_tags_arr = []
