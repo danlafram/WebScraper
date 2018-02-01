@@ -29,7 +29,7 @@ def extractLinksFromTopPosts():
 
 def parseLinks(driver, links):
 	str_tags_arr = []
-	for link in range(3): # Instagram posts 9 top stories per region
+	for link in range(9): # Instagram posts 9 top stories per region
 		# NOTE: JSON object has no way of getting user profile links. Driver is best solution for now
 		# Go to URL of user
 		driver.get(links[link])
@@ -70,7 +70,7 @@ def extractDataFromJSON(tags_json):
 		print(user_posts)
 		print(user_url)
 		print(user_profile_picture)
-		# storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
+		storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
 
 def storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents):
 	try:
