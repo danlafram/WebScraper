@@ -26,19 +26,18 @@ def extractLinksFromTopPosts():
 
 	# List of links of all the pictures on the page
 	links = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._f2mse a')]
-	return links
+	parseLinks(driver, links)
 
-def parseLinks():
-	links = extractLinksFromTopPosts()
+def parseLinks(driver, links):
 	str_tags_arr = []
-	for link in range(9):
-		# Create driver -> Consider parsing 'top posts' page with soup to avoid second driver
-		driver2 = webdriver.Chrome()
+	for link in range(9): # Instagram posts 9 top stories per region
+		# NOTE: JSON object has no way of getting user profile links. Driver is best solution for now
 		# Go to URL of user
-		driver2.get(links[link])
+		driver.get(links[link])
 		# Get user's URL
-		username = [a.get_attribute('href') for a in driver2.find_elements_by_css_selector('div._eeohz a')]
+		username = [a.get_attribute('href') for a in driver.find_elements_by_css_selector('div._eeohz a')] # Consider renaming to user_url
 		# Get request of user's page
+		# Start using soup instead of webdriver (less cost)
 		r = requests.get(username[0])
 		# Get html of user's page
 		html = r.text
@@ -47,18 +46,16 @@ def parseLinks():
 		# Extract all scirpt tags from soup
 		tags = soup.find_all('script')
 		# Extract script tag with important data
-		str_tags = str(tags[1])
+		str_tags = str(tags[2])
 		# Remove front end of script tag to only have JS object
 		str_tags = str_tags.split('_sharedData = ', 1)[-1]
 		# Remove back end of script tag to only have JS object
 		str_tags = str_tags.replace(" ", "").rstrip(str_tags[-10:])
 		# Turn new JS object string into JSON object
 		str_tags_arr.append(json.loads(str_tags))
-		driver2.close()
-	return str_tags_arr
+	extractDataFromJSON(str_tags_arr)
 
-def extractDataFromJSON():
-	tags_json = parseLinks()
+def extractDataFromJSON(tags_json):
 	for i in range(len(tags_json)):
 		# Extract wanted data form JSON object
 		user_followers = tags_json[i]['entry_data']['ProfilePage'][0]['user']['followed_by']['count']
@@ -68,6 +65,12 @@ def extractDataFromJSON():
 		user_profile_picture = tags_json[i]['entry_data']['ProfilePage'][0]['user']['profile_pic_url_hd']
 		user_url = ('https://instagram.com/' + username)
 		user_recents = ""
+		print(user_followers)
+		print(user_following)
+		print(username)
+		print(user_posts)
+		print(user_url)
+		print(user_profile_picture)
 		storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
 
 def storeData(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents):
@@ -83,7 +86,7 @@ def storeData(username, user_url, user_posts, user_followers, user_following, us
 			print(err)
 	else:
 		cursor = cnx.cursor()
-		add_info = ("INSERT INTO instagram_travel "
+		add_info = ("INSERT INTO ottawa_instagram "
                "(username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents) "
                "VALUES (%s, %s, %s, %s, %s, %s, %s)")
 		info_data = (username, user_url, user_posts, user_followers, user_following, user_profile_picture, user_recents)
@@ -94,5 +97,5 @@ def storeData(username, user_url, user_posts, user_followers, user_following, us
 
 
 
-extractDataFromJSON()
+extractLinksFromTopPosts()
 driver.close()
